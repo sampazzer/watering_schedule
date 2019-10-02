@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cultivar Greenhouse Dashboard</title>
+  </head>
+  
+  <body>
+	<div>
+		<!-- js var EnSch -->
+		<input type="checkbox" id="enable_sched" onclick="check_for_tick()">
+		<label for="scales">Enable Scheduler</label>
+	</div>
+  
+	<div id="watering_slots" style="visibility: hidden;">
+		<label for="wlength">Choose amount of watering slots in a 24h period:</label>
+		<select id="wlength">
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3" selected>3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+		</select>
+		<button type="button" id="sendwlength">Create</button>
+	</div>
+	
+	<!-- this is 'main_watering_div' as a js var -->
+	<div id="dynamic_watering"></div>
+
+  <script>
+	function check_for_tick(){
+	//turn on/off watering sheduler
+	var EnSch = document.getElementById("enable_sched");
+	if (EnSch.checked === true){
+		document.getElementById("watering_slots").style.visibility = "visible";
+		document.getElementById("dynamic_watering").style.visibility = "visible";
+	}
+	else{
+		document.getElementById("watering_slots").style.visibility = "hidden";
+		document.getElementById("dynamic_watering").style.visibility = "hidden";
+	}
+	console.log(EnSch.checked)
+}
+	//number of waterings BUTTON
+	var wlengthbut = document.getElementById('sendwlength');
+	//waterings SELECTION
+	var wselect = document.getElementById('wlength');
+	
+	//watering OBJECT
+	function watering_object(){
+	this.hours = "";
+	this.minutes = "";
+	this.watering_time = "";
+	this.divs = "";
+	}
+	
+	//BUTTON submit event on a click
+	wlengthbut.addEventListener('click', get_wselect_value);
+	
+	//FUNCTION CALLED EVERY TIME BUTTON IS PRESSED
+	function get_wselect_value(){
+	
+	//main watering div js variable
+	var main_watering_div = document.getElementById('dynamic_watering');
+	
+	//clear any elements on page in case of new selection
+	main_watering_div.innerHTML = '';
+	
+	//amount of watering selections
+	var select_value = wselect.value;
+	
+	//array to store OBJECTS
+	var object_array = [];
+	console.log("select value: " + select_value);
+	
+	//creating new elements
+	for (var i = 0; i + 1 <= select_value; i++) {
+		//create object in the array. The object will store the time of day and amount of watering time
+		object_array[i] = new watering_object();
+		//create the div that the inputs are being added to
+		object_array[i].divs = document.createElement("div");
+		//create the hours number input
+		object_array[i].hours = document.createElement("input");
+		object_array[i].hours.type = "number";
+		object_array[i].hours.min = "00";
+		object_array[i].hours.max = "23";
+		object_array[i].hours.placeholder = "HH";
+		object_array[i].hours.id = "hours_selection";
+		//label for hours input
+		var hours_label = document.createElement("label");
+		hours_label.htmlFor = "hours_selection";
+		hours_label.innerHTML = "Time of day (24h): ";
+
+		//create the minutes number input
+		object_array[i].minutes = document.createElement("input");
+		object_array[i].minutes.type = "number";
+		object_array[i].minutes.min = "00";
+		object_array[i].minutes.max = "59";
+		object_array[i].minutes.placeholder = "MM";
+		object_array[i].minutes.id = "minutes_selection";
+		object_array[i].minutes.style.marginRight = "50px";
+		
+		//creates the 'how long to water for' input
+		object_array[i].watering_time = document.createElement("input");
+		object_array[i].watering_time.type = "number";
+		object_array[i].watering_time.min = "01";
+		object_array[i].watering_time.max = "10";
+		object_array[i].watering_time.placeholder = "SS";
+		object_array[i].watering_time.id = "watering_time";
+		//label for how long to water
+		var how_long_to_water_label = document.createElement("label");
+		how_long_to_water_label.htmlFor = "watering_time";
+		how_long_to_water_label.innerHTML = "How long to water for: ";
+		
+		//adding hours and minutes elements to div
+		object_array[i].divs.appendChild(hours_label);
+		object_array[i].divs.appendChild(object_array[i].hours);
+		object_array[i].divs.appendChild(object_array[i].minutes);
+		//add how long to water elements to div
+		object_array[i].divs.appendChild(how_long_to_water_label);
+		object_array[i].divs.appendChild(object_array[i].watering_time);		
+		
+		//adding div to main html body
+		main_watering_div.appendChild(object_array[i].divs);
+		
+	}
+	
+	//button to send json data to server
+	var send_to_server_button = document.createElement("button");
+	send_to_server_button.type = "button";
+	send_to_server_button.innerHTML = "Submit";
+	send_to_server_button.onclick = send_data_function;
+	
+	main_watering_div.appendChild(send_to_server_button);
+	
+	function send_data_function(){
+		console.log("pressed me");
+	}
+	
+	var testObj = {
+		my_button: send_to_server_button
+	
+	}
+	console.log(object_array);
+	console.log(testObj);
+	
+	
+	}
+	
+	</script>
+  
+  </body>
+  
+</html>
